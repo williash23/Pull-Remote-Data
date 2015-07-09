@@ -3,7 +3,7 @@
 # Functions to download, project, crop and extract MUR SST data
 ################################################################################
 
-dload_fun <-	function(x = whale){
+dload_fun <-	function(x = out){
 		
 					#  To get names of files needed for each unique date whales were observed over the 2008-2014 study period...
 						Year <- x$Year		
@@ -36,21 +36,26 @@ dload_fun <-	function(x = whale){
 					bunzip2("F:/tmp/sst_tmp.nc.bz2", 
 									destname, 
 									overwrite = T)
+									
+				#  Create raster, crop to study area extent and write over the previous .nc file.					
+				r <- raster(paste("F:/tmp/sst", x$sst_fn[1], sep="/"), ncdf = T, stopIfNotEqualSpaced=FALSE)
+				e <- extent(-137.5, -134.0, 56.5, 59.5)
+				r <- crop(r, e, filename = (paste("F:/tmp/sst", x$sst_fn[1], sep="/")), overwrite=T)
 		}
 
 
 # proj_fun <- function()
 # Proj_fun not needed for these rasters	
 
-
-crop_fun <- function(){
-				r <- raster(paste("F:/tmp/sst", x$sst_fn[1], sep="/"), ncdf = T, stopIfNotEqualSpaced=FALSE)
-				e <- extent(-137.5, -134.0, 56.5, 59.5)
-				r <- crop(r, e, filename = (paste("F:/tmp/sst", x$sst_fn[1], sep="/")), overwrite=T)
-				}
+# crop-fun is embedded in the dload_fun to crop is done immediately and saves space on hard drive
+# crop_fun <- function(x = out){
+				# r <- raster(paste("F:/tmp/sst", x$sst_fn[1], sep="/"), ncdf = T, stopIfNotEqualSpaced=FALSE)
+				# e <- extent(-137.5, -134.0, 56.5, 59.5)
+				# r <- crop(r, e, filename = (paste("F:/tmp/sst", x$sst_fn[1], sep="/")), overwrite=T)
+				# }
 
 		
-ext_sst <- function(x = whale){
+ext_sst <- function(x = out){
 					r <- raster(paste("F:/tmp/sst", x$sst_fn[1], sep="/"), ncdf = T, stopIfNotEqualSpaced=FALSE)
 					#  Create spatial xy
 					proj4 <- CRS("+proj=utm +zone=8 + datum=WGS84 + ellps=WGS84") 
