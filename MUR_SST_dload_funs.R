@@ -57,7 +57,7 @@ dload_fun <-	function(x = out){
 		
 ext_sst <- function(x = out){
 					r <- raster(paste("F:/tmp/sst", x$sst_fn[1], sep="/"), ncdf = T, stopIfNotEqualSpaced=FALSE)
-					#  Create spatial xy
+					#  Create spatial xy for whale points
 					proj4 <- CRS("+proj=utm +zone=8 + datum=WGS84 + ellps=WGS84") 
 					
 					tmp <- x %>%
