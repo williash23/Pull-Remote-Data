@@ -43,17 +43,6 @@ dload_fun <-	function(x = out){
 				r <- crop(r, e, filename = (paste("F:/tmp/sst", x$sst_fn[1], sep="/")), overwrite=T)
 		}
 
-
-# proj_fun <- function()
-# Proj_fun not needed for these rasters	
-
-# crop-fun is embedded in the dload_fun to crop is done immediately and saves space on hard drive
-# crop_fun <- function(x = out){
-				# r <- raster(paste("F:/tmp/sst", x$sst_fn[1], sep="/"), ncdf = T, stopIfNotEqualSpaced=FALSE)
-				# e <- extent(-137.5, -134.0, 56.5, 59.5)
-				# r <- crop(r, e, filename = (paste("F:/tmp/sst", x$sst_fn[1], sep="/")), overwrite=T)
-				# }
-
 		
 ext_sst <- function(x = out){
 					r <- raster(paste("F:/tmp/sst", x$sst_fn[1], sep="/"), ncdf = T, stopIfNotEqualSpaced=FALSE)

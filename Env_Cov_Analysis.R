@@ -49,12 +49,40 @@
 
 ################################################################################		
 		#  MODIS chlorophyll-a: 4km, monthly composite (crop and extract)
-		#  Read in whale observation location data
-		whale <- read.csv("C:/Users/sara.williams/Documents/GitHub/Pull-Remote-Data/data/Whale_Pts.csv")
-		out <- whale %>%
-				mutate(chlor_fn = paste(DateTxt, ".img", sep=""))	
+		
+		#  To select chlor data file that is closest to whale sighting event date...
+		#   First get just names of files (which are the julian days) from the files themselves
+		dat <- read.csv("C:/Users/sara.williams/Documents/GitHub/Pull-Remote-Data/data/chlor_8d_dat.csv")
+		whale <- read.csv("C:/Users/sara.williams/Documents/GitHub/Pull-Remote-Data/data/Whale_Pts_SST_bath_buff.csv")
+		chlor_8day_fn <- unique(dat[,1])
+		Julian_DateTxt <- unique(whale$Julian_DateTxt)
+
+		#  Find closest matching start date of chlor data file to whale sighting event date and
+		#   determine the row index for each chlor file that is needed.
+		findit <-  function(x,vec){
+			y <- abs(x - vec)
+			which.min(y)
+			}
+		needed_chlor_rows <- sapply(Julian_DateTxt, findit, chlor_8day_fn)
+
+		#  Select only the chlor file names identified by function above.
+		chlor_8day_fn <- as.data.frame(chlor_8day_fn)
+		tmp <- chlor_8day_fn[needed_chlor_rows,]
+		chlor_8day <- as.data.frame(cbind(tmp, Julian_DateTxt))
+		
 				
+		#  Read in whale observation location data
+		whale <- read.csv("C:/Users/sara.williams/Documents/GitHub/Pull-Remote-Data/data/Whale_Pts_SST_bath_buff.csv")
+		out <-left_join(chlor_8day, whale, by = "Julian_DateTxt")
+		names(out)[1]<-"chlor_8day_fn"
+		
 		#  Source MODIS_chlor_ext_funs
 		source(file.path("C:/Users/sara.williams/Documents/GitHub/Pull-Remote-Data/MODIS_chlor_ext_funs.R"))
-							
+					
+		#  Extract values
+			out %>%
+				group_by(chlor_8day_fn) %>%
+				do(crop_fun(.)) %>%
+				do(ext_chlor(.)) %>%
+				as.data.frame(.)
 				
